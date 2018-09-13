@@ -1,0 +1,11 @@
+- name: Flask Env on Amazon Linux2
+  hosts: all
+  become: yes
+  roles:
+    - role: common
+      public_key: development.pub
+    - role: mysql56
+    - role: python3
+    - role: flask
+    - role: uwsgi
+    - role: nginx

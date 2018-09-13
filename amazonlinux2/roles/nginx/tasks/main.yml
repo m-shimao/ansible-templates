@@ -1,0 +1,11 @@
+---
+- name: install nginx1.12 from amazon-linux-extras
+  command: amazon-linux-extras install nginx1.12
+- name: put uwsgi.conf
+  copy: src=uwsgi.conf dest=/etc/nginx/conf.d/uwsgi.conf owner=root group=root
+- name: change nginx.conf
+  raw: sed -i -e 's/ default_server//' /etc/nginx/nginx.conf
+- name: restart nginx
+  service: name=nginx state=restarted
+- name: restart uwsgi
+  service: name=uwsgi state=restarted

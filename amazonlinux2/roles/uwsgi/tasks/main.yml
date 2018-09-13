@@ -1,0 +1,26 @@
+---
+- name: groupinstall "Development Tools"
+  yum: name={{ item }} state=present
+  with_items:
+    - "@Development Tools"
+- name: pip install uwsgi
+  pip: name={{ item }} executable=pip3
+  with_items:
+    - uwsgi
+- name: put watcher.py
+  copy: src=watcher.py dest=/var/www/flask/watcher.py owner={{ main_username }} group={{ main_username }} mode=755
+- name: put uwsgi.ini
+  copy: src=uwsgi.ini dest=/var/www/flask/uwsgi.ini owner={{ main_username }} group={{ main_username }} mode=755
+- name: make socket dir
+  file: path=/var/run/uwsgi state=directory mode=0777
+- name: make log dir
+  file: path=/var/log/uwsgi state=directory mode=0777
+- name: put uwsgi.service
+  copy: src=uwsgi.service dest=/etc/systemd/system/uwsgi.service owner=root group=root mode=0755
+- name: load uwsgi.service
+  systemd:
+    name: uwsgi.service
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+  become: yes

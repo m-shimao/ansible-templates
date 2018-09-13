@@ -1,0 +1,8 @@
+---
+- name: install python3 from amazon-linux-extras
+  command: amazon-linux-extras install python3
+- name: install devel
+  yum: name={{ item }} state=present
+  with_items:
+    - "python3-devel"
+

@@ -1,0 +1,13 @@
+---
+- name: pip install flask
+  pip: name={{ item }} executable=pip3
+  with_items:
+    - flask
+    - SQLAlchemy
+    - flask-sqlalchemy
+    - PyMySQL
+    - Flask-Migrate
+- name: make root dir
+  file: path=/var/www/flask state=directory owner={{ main_username }} group={{ main_username }} mode=755
+- name: put run.py
+  copy: src=run.py dest=/var/www/flask/run.py owner={{ main_username }} group={{ main_username }} mode=755

@@ -1,0 +1,5 @@
+---
+# 追加するユーザ名
+main_username: test
+# 追加するユーザのパスワード
+main_password: test

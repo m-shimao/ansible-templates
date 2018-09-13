@@ -1,0 +1,55 @@
+---
+# userを追加
+- name: useradd main_username
+  user: name={{ main_username }} password={{ main_password }}
+- name: 追加したユーザーを sudoer とする
+  template: src=sudoer.j2 dest=/etc/sudoers.d/{{ main_username }}
+- name: 追加ユーザーの .ssh ディレクトリを作成する
+  file: dest=/home/{{ main_username }}/.ssh state=directory owner={{ main_username }} group={{ main_username }} mode=700
+- name: 追加ユーザーの公開鍵を設置する
+  copy: src={{ public_key }} dest=/home/{{ main_username }}/.ssh/authorized_keys owner={{ main_username }} group={{ main_username }} mode=600
+# パッケージを更新
+- name: yum update
+  command: yum -y update
+# 不要なサービスの停止と自動起動をオフに
+- name: stop services
+  service: name={{ item }} state=stopped
+  with_items:
+    - avahi-daemon
+    - firewalld
+    - postfix
+    - sendmail
+  ignore_errors: true
+- name: disable services
+  service: name={{ item }} enabled=no
+  with_items:
+    - avahi-daemon
+    - firewalld
+    - postfix
+    - sendmail
+  ignore_errors: true
+# ntpをインストール
+- name: install ntp
+  yum: name=ntp state=present
+- name: enable ntp
+  service: name=ntpd enabled=yes
+- name: stop ntpd
+  service: name=ntpd state=stopped
+- name: change ntp.conf
+  copy: src=ntp.conf dest=/etc/ntp.conf owner=root group=root
+- name: change timezone
+  copy: src=zoneinfo_Japan dest=/etc/localtime owner=root group=root
+- name: sync ntp.nict.jp
+  command: /usr/sbin/ntpdate ntp.nict.jp
+- name: start ntpd
+  service: name=ntpd state=started
+# 色々パッケージを追加
+- name: install packages
+  yum: name={{ item }} state=present
+  with_items:
+    - zip
+    - unzip
+    - wget
+    - git
+    - vim
+    - zsh
