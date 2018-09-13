@@ -3,6 +3,7 @@
   pip: name={{ item }} executable=pip3
   with_items:
     - flask
+    - flask-mysql
     - SQLAlchemy
     - flask-sqlalchemy
     - PyMySQL
